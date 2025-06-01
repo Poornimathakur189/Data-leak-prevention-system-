@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>XSS Scanner - Home</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <style>
+    body {
+      transition: background-image 1s ease-in-out;
+      background-size: cover;
+      background-repeat: no-repeat;
+      color: #fff;
+    }
+    .option-box {
+      border: 2px solid #fff;
+      border-radius: 15px;
+      padding: 40px;
+      text-align: center;
+      background: rgba(0,0,0,0.6);
+      cursor: pointer; 
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .option-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255,255,255,0.5);
+    }
+    .option-title {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    .option-desc {
+      font-size: 1.2rem;
+    }
+  </style>
+  <script>
+    // Background wallpaper array (using Unsplash random images)
+    const backgrounds = [
+      'url("https://source.unsplash.com/random/1920x1080?nature")',
+      'url("https://source.unsplash.com/random/1920x1080?tech")',
+      'url("https://source.unsplash.com/random/1920x1080?city")',
+      'url("https://source.unsplash.com/random/1920x1080?abstract")'
+    ];
+    let current = 0;
+    function changeBackground() {
+      document.body.style.backgroundImage = backgrounds[current];
+      current = (current + 1) % backgrounds.length;
+    }
+    window.onload = function() {
+      changeBackground();
+      setInterval(changeBackground, 5000); // change every 5 seconds
+    }
+  </script>
+</head>
+<body>
+  <div class="container-fluid vh-100 d-flex flex-column justify-content-center align-items-center">
+    <h1 class="mb-5 text-white animate__animated animate__fadeInDown">Welcome to XSS Scanner</h1>
+    <div class="row w-100">
+      <!-- Option Box 1: Subdomain Enumeration -->
+      <div class="col-md-6 mb-4">
+        <div class="option-box animate__animated animate__fadeInLeft" data-bs-toggle="modal" data-bs-target="#subdomainModal">
+          <div class="option-title">Find Subdomains</div>
+          <div class="option-desc">Enter a domain to enumerate its subdomains and then scan for vulnerabilities.</div>
+        </div>
+      </div>
+      <!-- Option Box 2: Direct XSS Scan -->
+      <div class="col-md-6 mb-4">
+        <div class="option-box animate__animated animate__fadeInRight" data-bs-toggle="modal" data-bs-target="#directModal">
+          <div class="option-title">Direct XSS Scan</div>
+          <div class="option-desc">Paste a URL directly to test it for critical XSS vulnerabilities.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal for Subdomain Enumeration -->
+  <div class="modal fade" id="subdomainModal" tabindex="-1" aria-labelledby="subdomainModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title" id="subdomainModalLabel">Find Subdomains</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="POST" action="/home">
+          <div class="modal-body">
+            <input type="hidden" name="action" value="subdomains">
+            <div class="mb-3">
+              <label for="domainInput" class="form-label">Enter Domain</label>
+              <input type="text" class="form-control" id="domainInput" name="domain" placeholder="example.com" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Enumerate</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal for Direct XSS Scan -->
+  <div class="modal fade" id="directModal" tabindex="-1" aria-labelledby="directModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title" id="directModalLabel">Direct XSS Scan</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="POST" action="/home">
+          <div class="modal-body">
+            <input type="hidden" name="action" value="direct">
+            <div class="mb-3">
+              <label for="targetInput" class="form-label">Enter URL</label>
+              <input type="text" class="form-control" id="targetInput" name="target" placeholder="http://example.com/page" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Scan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>    
+  <!-- Bootstrap JS (requires Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
